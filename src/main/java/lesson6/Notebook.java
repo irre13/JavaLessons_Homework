@@ -14,12 +14,18 @@ public class Notebook {
     String modelGPU;
     int amountRAM;
     int amountHUD;
+
     public Notebook(int id) {
         this.id = id;
     }
 
     @Override
     public String toString() {
-        return String.format(" %s %s" ,brand, model);
+        return String.format("""
+                 %s %s %s
+                 Состояние: %s
+                 Диагональ %d дюймов Процессор: %s Видеокарта: %s Объём RAM: %s ГБ Объём HUD %s ГБ
+                """, brand, model, color, condition, screenSize, modelCPU, modelGPU, amountRAM, amountHUD);
     }
+
 }
