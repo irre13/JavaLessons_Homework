@@ -55,7 +55,7 @@ public class MainClassHomework {
         notebookList.add(notebook3);
         notebookList.add(notebook4);
 
-        HashSet<Notebook> hashNotebook = new HashSet<>(notebookList);
+        HashSet<Notebook> hashNotebook = new HashSet(notebookList);
         HashSet<Notebook> result = new HashSet<>();
         HashMap<String, Object> filters = new HashMap<>();
 
@@ -67,7 +67,8 @@ public class MainClassHomework {
                      2 - цвет корпуса\s
                      3 - объём жесткого диска\s
                      4 - объём оперативной памяти\s
-                     5 - чтобы вывести подробный список всех ноутбуков\s
+                     5 - вывести результаты поиска\s
+                     6 - чтобы вывести подробный список всех ноутбуков\s
                      0 - выход из программы""");
             int num = scan.nextInt();
             scan.nextLine();
@@ -76,45 +77,68 @@ public class MainClassHomework {
                 case 2 -> filterColor(filters, hashNotebook);
                 case 3 -> filterHUD(filters);
                 case 4 -> filterRAM(filters);
-                case 5 -> printAll(hashNotebook);
+                case 5 -> {
+                    printSearch(getResult(hashNotebook, filters));
+                    filters = new HashMap<>();
+                }
+                case 6 -> printAll(hashNotebook);
                 case 0 -> System.exit(1);
                 default -> System.out.println("Введено неверное значение");
             }
-            for (Map.Entry<String, Object> entry : filters.entrySet()) {
-                if (entry.getKey().equals("screenSize")) {
-                    for (Notebook notebook : hashNotebook) {
-                        if (notebook.getScreenSize() >= (Integer) entry.getValue()) {
-                            result.add(notebook);
-                        }
-                    }
+
+        }
+    }
+
+    private static HashSet<Notebook> getResult(HashSet<Notebook> hashSet, HashMap<String, Object> filter) {
+        for (Map.Entry<String, Object> entry : filter.entrySet()) {
+            HashSet<Notebook> result;
+            result = getResultOfOneIteration(hashSet, entry);
+            hashSet = new HashSet<>(result);
+        }
+        return hashSet;
+    }
+
+    private static HashSet<Notebook> getResultOfOneIteration(HashSet<Notebook> hashSet, Map.Entry<String, Object> filter) {
+        HashSet<Notebook> result = new HashSet<>();
+        if (filter.getKey().equals("screenSize")) {
+            for (Notebook item : hashSet) {
+                if (item.getScreenSize() >= (Integer) filter.getValue()) {
+                    result.add(item);
                 }
-                if (entry.getKey().equals("color")) {
-                    for (Notebook notebook : hashNotebook) {
-                        if (notebook.getColor().equals(entry.getValue())) {
-                            result.add(notebook);
-                        }
-                    }
-                }
-                if (entry.getKey().equals("amountHUD")) {
-                    for (Notebook notebook : hashNotebook) {
-                        if (notebook.getAmountHUD() >= (Integer) entry.getValue()) {
-                            result.add(notebook);
-                        }
-                    }
-                }
-                if (entry.getKey().equals("amountRAM")) {
-                    for (Notebook notebook : hashNotebook) {
-                        if (notebook.getAmountHUD() >= (Integer) entry.getValue()) {
-                            result.add(notebook);
-                        }
-                    }
-                }
-            }
-            for (Notebook notebook : result) {
-                System.out.println(notebook.toString());
             }
         }
+        if (filter.getKey().equals("color")) {
+            for (Notebook item : hashSet) {
+                if (item.getColor().equals(filter.getValue())) {
+                    result.add(item);
+                }
+            }
+        }
+        if (filter.getKey().equals("amountHUD")) {
+            for (Notebook item : hashSet) {
+                if (item.getAmountHUD() >= (Integer) filter.getValue()) {
+                    result.add(item);
+                }
+            }
+        }
+        if (filter.getKey().equals("amountRAM")) {
+            for (Notebook item : hashSet) {
+                if (item.getAmountRAM() >= (Integer) filter.getValue()) {
+                    result.add(item);
+                }
+            }
+        }
+        return result;
+    }
 
+    private static void printSearch(HashSet<Notebook> hashSet) {
+        if (hashSet.size() != 0) {
+            for (Notebook item : hashSet) {
+                System.out.println(item.toString());
+            }
+        } else {
+            System.out.println("Поиск не дал результатов. Введите другие параметры");
+        }
     }
 
     private static HashMap<String, Object> filterScreenSize(HashMap<String, Object> tempMap) {
